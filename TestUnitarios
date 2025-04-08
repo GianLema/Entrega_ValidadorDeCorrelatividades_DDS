@@ -1,0 +1,44 @@
+import org.junit.jupiter.api.Test;
+import java.util.Arrays;
+import java.util.Collections;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class InscripcionTest {
+
+    @Test
+    void testInscripcionAprobada() {
+        Materia algoritmos = new Materia("Algoritmos", Collections.emptyList());
+        Materia paradigmas = new Materia("Paradigmas", Arrays.asList(algoritmos));
+        Materia diseño = new Materia("Diseño", Arrays.asList(paradigmas));
+
+        Alumno alumno = new Alumno(Arrays.asList(algoritmos, paradigmas));
+
+        Inscripcion inscripcion = new Inscripcion(alumno, Arrays.asList(diseño));
+        assertTrue(inscripcion.aprobada(), "La inscripción debería ser aprobada porque tiene todas las correlativas.");
+    }
+
+    @Test
+    void testInscripcionRechazadaPorFaltaDeCorrelativa() {
+        Materia algoritmos = new Materia("Algoritmos", Collections.emptyList());
+        Materia paradigmas = new Materia("Paradigmas", Arrays.asList(algoritmos));
+        Materia diseño = new Materia("Diseño", Arrays.asList(paradigmas));
+
+        Alumno alumno = new Alumno(Collections.singletonList(algoritmos)); // Le falta Paradigmas
+
+        Inscripcion inscripcion = new Inscripcion(alumno, Arrays.asList(diseño));
+        assertFalse(inscripcion.aprobada(), "La inscripción debería ser rechazada por falta de correlativa.");
+    }
+
+    @Test
+    void testInscripcionConMultiplesMateriasUnaRechazada() {
+        Materia a = new Materia("A", Collections.emptyList());
+        Materia b = new Materia("B", Arrays.asList(a));
+        Materia c = new Materia("C", Arrays.asList(b));
+
+        Alumno alumno = new Alumno(Arrays.asList(a, b)); // No tiene B aprobada para C
+
+        Inscripcion inscripcion = new Inscripcion(alumno, Arrays.asList(b, c));
+        assertFalse(inscripcion.aprobada(), "La inscripción debería ser rechazada porque no cumple todas las correlativas.");
+    }
+}
